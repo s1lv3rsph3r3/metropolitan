@@ -1,0 +1,56 @@
+const { Route } = require('../proto/Route');
+const ModuleRoutingProvider = require('./providers/ModuleRoutingProviderFacade');
+const { ConfigParser } = require('../utils/generic');
+const controllerConfig = require('./config/controllers.json');
+const moduleConfig = require('./config/modules.json');
+
+// let text = ConfigParser.parseWithEmbeddedVariables(routeConfig.baseDir, { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` });
+
+module.exports = (function start() {
+  const get = (path, fn) => {
+    if(path === undefined || path === null){
+      throw (new Error('Missing URL argument.'));
+    }
+    if(fn === undefined || fn === null){
+      throw (new Error('Missing fn argument.'));
+    }
+    console.log(typeof(fn));
+    switch (typeof(fn)){
+      case 'function':
+        // do nothing
+        console.log('function is function');
+        break;
+      case 'string':
+        // get function from the controller
+        console.log('function is string');
+        let parts = fn.split('@');
+        const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
+        // use the controllers config part to define where to get the controllers
+        // const text = ConfigParser.parseWithEmbeddedVariables(controllerConfig.baseDir, {});
+        const handler = require(`./application_modules/${moduleName}/controllers/http/${parts[0]}`);
+        fn = handler[parts[1]];
+        break;
+      default:
+        throw (new Error('Handler function is incorrectly defined.'));
+        break;
+    }
+    // If anything else => throw error
+    const route = (new Route()).get(path, fn);
+    ModuleRoutingProvider.getInstance().get(route);
+    return route;
+  };
+
+  const post = (path) => {
+    if(path === undefined || path === null){
+      throw (new Error('Missing URL argument.'));
+    };
+    const route = (new Route()).post(path);
+    ModuleRoutingProvider.getInstance().post(route);
+    return route;
+  };
+
+  return {
+    get,
+    post,
+  };
+}());
