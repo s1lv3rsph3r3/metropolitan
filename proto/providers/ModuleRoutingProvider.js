@@ -1,7 +1,7 @@
 const express = require('express');
 const { Route } = require('../Route');
 
-const Middleware = require('../application_modules/admin/middlewares/TestMiddleware');
+//const Middleware = require('../application_modules/admin/middlewares/TestMiddleware');
 
 // Need to take into consideration middleware
 
@@ -27,7 +27,7 @@ function ModuleRoutingProvider() {
   //   console.log('This is the last function');
   //   next();
   // });
-  this.bindMiddleware(Middleware);
+  //this.bindMiddleware(Middleware);
 };
 
 ModuleRoutingProvider.prototype.setModuleName = function start(name){

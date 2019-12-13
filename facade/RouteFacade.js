@@ -1,8 +1,9 @@
+const { BRC487 } = require('@s1lv3rsph3r3/central');
 const { Route } = require('../proto/Route');
 const ModuleRoutingProvider = require('./providers/ModuleRoutingProviderFacade');
 const { ConfigParser } = require('../utils/generic');
-const controllerConfig = require('./config/controllers.json');
-const moduleConfig = require('./config/modules.json');
+const controllerConfig = require(BRC487.commute('config.controllers'));
+const moduleConfig = require(BRC487.commute('config.modules'));
 
 // let text = ConfigParser.parseWithEmbeddedVariables(routeConfig.baseDir, { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` });
 
@@ -27,7 +28,9 @@ module.exports = (function start() {
         const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
         // use the controllers config part to define where to get the controllers
         // const text = ConfigParser.parseWithEmbeddedVariables(controllerConfig.baseDir, {});
-        const handler = require(`./application_modules/${moduleName}/controllers/http/${parts[0]}`);
+        // Requires using the root node from the tree
+        const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
+        const handler = require(`${absolutePathToBaseProject}/${moduleName}/controllers/http/${parts[0]}`);
         fn = handler[parts[1]];
         break;
       default:

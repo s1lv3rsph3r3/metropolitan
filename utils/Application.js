@@ -1,13 +1,16 @@
+const { BRC487 } = require('@s1lv3rsph3r3/central');
 const fs = require('fs');
 const { ConfigParser } = require('./generic');
 const ModuleRoutingProvider = require('../facade/providers/ModuleRoutingProviderFacade');
 const ModuleEventProvider = require('../facade/providers/ModuleEventProviderFacade');
 
 // Route configuration file
-const routeConfig = require('./config/routes.json');
+const routeConfig = require(BRC487.commute('config.routes'));
 
 // Module configuration file
-const moduleConfig = require('./config/modules.json');
+const moduleConfig = require(BRC487.commute('config.modules'));
+
+const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
 
 module.exports = (function start() {
   const bootModules = (app) => {
@@ -16,10 +19,10 @@ module.exports = (function start() {
     }
 
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
-      
+
       const moduleName = value;
       console.log(moduleName);
-      
+
       /******* MODULE ROUTING ***************/
       // Dispose of ModuleRoutingProvider if it exists
       ModuleRoutingProvider.dispose();
@@ -33,7 +36,7 @@ module.exports = (function start() {
         let text = ConfigParser.parseWithEmbeddedVariables(routeConfig.baseDir, { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` });
         // console.log(text);
         // add the filename on to the entry
-        text = `./${text}${value}`;
+        text = `${absolutePathToBaseProject}/${text}${value}`;
         routeFileList.push(text);
       });
 
@@ -61,7 +64,7 @@ module.exports = (function start() {
       const moduleName = value;
       console.log(moduleName);
       eventsFile = ConfigParser.parseWithEmbeddedVariables(routeConfig.baseDir, { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` });
-      eventsFile = `./${eventsFile}${routeConfig.events}`;
+      eventsFile = `${absolutePathToBaseProject}/${eventsFile}${routeConfig.events}`;
       require(eventsFile);
     });
 
@@ -71,13 +74,13 @@ module.exports = (function start() {
   };
 
   const bindApplicationMiddlewares = (app) => {
-    const applicationMiddlewaresConfig = require('./config/middleware.json');
+    const applicationMiddlewaresConfig = require(BRC487.commute('config.middleware'));
     Object.entries(applicationMiddlewaresConfig.app).forEach( ([key, value], index) => {
       // key is the filename
       // value is the array of functions
       // index is just the index
       // loop through all the values to add to the app
-      const stringReq = `${applicationMiddlewaresConfig.rootDir}/${key}`;
+      const stringReq = `${absolutePathToBaseProject}/${applicationMiddlewaresConfig.rootDir}/${key}`;
       const middlewareFile = require(stringReq);
       for(let i = 0; i < value.length; i++){
         app.use((req,res,next) => {
