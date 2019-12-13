@@ -15,5 +15,8 @@
     "url": "https://github.com/s1lv3rsph3r3/metropolitan/issues"
   },
   "homepage": "https://github.com/s1lv3rsph3r3/metropolitan#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
