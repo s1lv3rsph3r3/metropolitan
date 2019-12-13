@@ -1,7 +1,7 @@
 const express = require('express');
 const { Route } = require('../Route');
 
-//const Middleware = require('../application_modules/admin/middlewares/TestMiddleware');
+// const Middleware = require('../application_modules/admin/middlewares/TestMiddleware');
 
 // Need to take into consideration middleware
 
@@ -27,53 +27,53 @@ function ModuleRoutingProvider() {
   //   console.log('This is the last function');
   //   next();
   // });
-  //this.bindMiddleware(Middleware);
+  // this.bindMiddleware(Middleware);
+}
+
+ModuleRoutingProvider.prototype.setModuleName = function start(name) {
+  this.moduleName = name;
 };
 
-ModuleRoutingProvider.prototype.setModuleName = function start(name){
-  this.moduleName = name;
-}
-
-ModuleRoutingProvider.prototype.getModuleName = function start(){
+ModuleRoutingProvider.prototype.getModuleName = function start() {
   return this.moduleName;
-}
+};
 
-ModuleRoutingProvider.prototype.bindMiddleware = function start(middlewareList){
+ModuleRoutingProvider.prototype.bindMiddleware = function start(middlewareList) {
   // this should bind the middleware;
   // for each of the middleware functions for the module - bind to the router;
   // this needs direct access to the listing of the file directories
-  Object.entries(Middleware).forEach(([key, value], index) => {
-    //console.log(key, value, index);
+  Object.values(middlewareList).forEach((v) => {
+    // console.log(key, value, index);
     this.router
-    .use((req, res, next) => {
-      value.apply(null, [req, res, next]);
-    });
+      .use((req, res, next) => {
+        v.apply(null, [req, res, next]);
+      });
   });
-}
-
-ModuleRoutingProvider.prototype.get = function start(route) {
-  if(!(route instanceof Route)){
-      throw (new Error('Missing Route argument.'));
-    };
-    this.router.get(route.getUrl(), function(req, res){
-      route.getHandler().apply(null, [req, res]);
-    });
-    return true;
 };
 
-ModuleRoutingProvider.prototype.post = function start(route) {
-  if(!(route instanceof Route)){
+ModuleRoutingProvider.prototype.get = function start(route) {
+  if (!(route instanceof Route)) {
     throw (new Error('Missing Route argument.'));
-  };
-  this.router.post(route.getUrl(), function (req, res){
-    console.log('this is the route');
+  }
+  this.router.get(route.getUrl(), (req, res) => {
+    route.getHandler().apply(null, [req, res]);
   });
   return true;
 };
 
-ModuleRoutingProvider.prototype.getRouter = function start(route){
+ModuleRoutingProvider.prototype.post = function start(route) {
+  if (!(route instanceof Route)) {
+    throw (new Error('Missing Route argument.'));
+  }
+  // this.router.post(route.getUrl(), (req, res) => {
+  //   console.log('this is the route');
+  // });
+  return true;
+};
+
+ModuleRoutingProvider.prototype.getRouter = function start() {
   // get the instance of the router
   return this.router;
-}
+};
 
 module.exports = { ModuleRoutingProvider };

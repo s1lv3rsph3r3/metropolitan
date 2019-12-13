@@ -12,10 +12,10 @@ const Application = require('./utils/Application');
 const generic = require('./utils/Application');
 
 module.exports = {
-    ModuleEventProvider,
-    ModuleRoutingProvider,
-    Event,
-    Route,
-    Application,
-    generic,
+  ModuleEventProvider,
+  ModuleRoutingProvider,
+  Event,
+  Route,
+  Application,
+  generic,
 };

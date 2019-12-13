@@ -8,7 +8,7 @@ Event.prototype.subscribe = function start(subChannel) {
 Event.prototype.publish = function start(publishFn) {
   this.publishHandler = publishFn;
   return this;
-}
+};
 
 /* Export the Route prototype */
 module.exports = { Event };
