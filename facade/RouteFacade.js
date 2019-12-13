@@ -30,7 +30,7 @@ module.exports = (function start() {
         // const text = ConfigParser.parseWithEmbeddedVariables(controllerConfig.baseDir, {});
         // Requires using the root node from the tree
         const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
-        const handler = require(`${absolutePathToBaseProject}/${moduleName}/controllers/http/${parts[0]}`);
+        const handler = require(`${absolutePathToBaseProject}/application_modules/${moduleName}/controllers/http/${parts[0]}`);
         fn = handler[parts[1]];
         break;
       default:
