@@ -1,4 +1,7 @@
-function Event() {}
+function Event() {
+  this.channel = null;
+  this.publishHandler = null;
+}
 
 Event.prototype.subscribe = function start(subChannel) {
   this.channel = subChannel;
@@ -10,5 +13,4 @@ Event.prototype.publish = function start(publishFn) {
   return this;
 };
 
-/* Export the Route prototype */
 module.exports = { Event };

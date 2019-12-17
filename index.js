@@ -11,6 +11,7 @@ const Route = require('./facade/RouteFacade');
 const Application = require('./utils/Application');
 const generic = require('./utils/generic');
 const instance = require('./utils/instance');
+const SubscriptionFactory = require('./utils/SubscriptionFactory');
 
 module.exports = {
   ModuleEventProvider,
@@ -20,4 +21,5 @@ module.exports = {
   Application,
   generic,
   instance,
+  SubscriptionFactory,
 };
