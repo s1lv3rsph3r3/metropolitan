@@ -3,6 +3,7 @@ const fs = require('fs');
 const { ConfigParser } = require('./generic');
 const ModuleRoutingProvider = require('../facade/providers/ModuleRoutingProviderFacade');
 const ModuleEventProvider = require('../facade/providers/ModuleEventProviderFacade');
+const SubscriptionFactory = require('./SubscriptionFactory');
 
 // Route configuration file
 const routeConfig = require(BRC487.commute('config.routes'));
@@ -42,7 +43,7 @@ module.exports = (function start() {
 
       // Require each routing file for the current module namespace
       for (let i = 0; i < routeFileList.length; i++) {
-        let text = `${routeFileList[i]}`; 
+        let text = `${routeFileList[i]}`;
         require(text);
       }
 
@@ -59,18 +60,21 @@ module.exports = (function start() {
     // iterate through the modules and require the events
     /**************** EVENT ROUTING *****************/
     // this should be to require the events file
+    const filesToInclude = {};
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
-      
       const moduleName = value;
-      console.log(moduleName);
       eventsFile = ConfigParser.parseWithEmbeddedVariables(routeConfig.baseDir, { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` });
       eventsFile = `${absolutePathToBaseProject}/${eventsFile}${routeConfig.events}`;
-      require(eventsFile);
+      filesToInclude[moduleName] = eventsFile;
     });
 
-    for(let i = 0; i < (ModuleEventProvider.getInstance()).getEventList().length; i++){
-      console.log(ModuleEventProvider.getInstance().getEventList()[i].channel);
-    }
+    //for(let i = 0; i < (ModuleEventProvider.getInstance()).getEventList().length; i++){
+    //  console.log(ModuleEventProvider.getInstance().getEventList()[i].channel);
+    //}
+    Object.entries(filesToInclude).forEach([key, value], index) => {
+      require(value);
+      SubscriptionFactory.subscribeToAll(ModuleEventProvider.getInstance().getEventList(), key);
+    });
   };
 
   const bindApplicationMiddlewares = (app) => {
