@@ -13,7 +13,6 @@ module.exports = (function start() {
     if(fn === undefined || fn === null){
       throw (new Error('Missing fn argument.'));
     }
-    console.log(typeof(fn));
     switch (typeof(fn)){
       case 'function':
         // Function exists - Do nothing.

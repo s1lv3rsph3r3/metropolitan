@@ -14,6 +14,8 @@ const moduleConfig = require(BRC487.commute('config.modules'));
 const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
 
 module.exports = (function start() {
+
+  /******* MODULE ROUTING ***************/
   const bootModules = (app) => {
     if (app === undefined || app === null) {
       throw (new Error('Missing app argument.'));
@@ -22,9 +24,7 @@ module.exports = (function start() {
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
 
       const moduleName = value;
-      console.log(moduleName);
 
-      /******* MODULE ROUTING ***************/
       // Dispose of ModuleRoutingProvider if it exists
       ModuleRoutingProvider.dispose();
 
@@ -34,9 +34,12 @@ module.exports = (function start() {
       // Generate a list of route files
       const routeFileList = [];
       Object.entries(routeConfig.filename).forEach(([key, value], index) => {
-        let text = ConfigParser.parseWithEmbeddedVariables(routeConfig.baseDir, { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` });
-        // console.log(text);
-        // add the filename on to the entry
+        let text = ConfigParser.parseWithEmbeddedVariables(
+          routeConfig.baseDir,
+          { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
+        );
+
+        // Add to the list of route files to require
         text = `${absolutePathToBaseProject}/${text}${value}`;
         routeFileList.push(text);
       });
@@ -48,7 +51,6 @@ module.exports = (function start() {
       }
 
       const namespace = `/${moduleName}`;
-      // only use get method from the proto
       const router = ModuleRoutingProvider.getInstance().getRouter();
       app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
     });
@@ -61,7 +63,10 @@ module.exports = (function start() {
     const filesToInclude = {};
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
       const moduleName = value;
-      eventsFile = ConfigParser.parseWithEmbeddedVariables(routeConfig.baseDir, { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` });
+      eventsFile = ConfigParser.parseWithEmbeddedVariables(
+        routeConfig.baseDir,
+        { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
+      );
       eventsFile = `${absolutePathToBaseProject}/${eventsFile}${routeConfig.events}`;
       filesToInclude[moduleName] = eventsFile;
     });
@@ -72,6 +77,8 @@ module.exports = (function start() {
     });
   };
 
+  /**************** MIDDLEWARE *****************/
+  // ERR: This is very experimental - requires more work
   const bindApplicationMiddlewares = (app) => {
     const applicationMiddlewaresConfig = require(BRC487.commute('config.middleware'));
     Object.entries(applicationMiddlewaresConfig.app).forEach( ([key, value], index) => {

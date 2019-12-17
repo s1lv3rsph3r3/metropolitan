@@ -1,7 +1,6 @@
 const ConfigParser = (function start() {
 
-  // this function should only apply to keys that are well defined
-  // (undefined should not alter the expression)
+  // ERR: This will fall over if all the keys are not defined in valueObj
   const parseWithEmbeddedVariables = (expression, valueObj) => {
     const templateMatcher = /{{\s?([^{}\s]*)\s?}}/g;
     const text = expression.replace(templateMatcher, (substring, key) => {

@@ -1,34 +1,11 @@
 const express = require('express');
 const { Route } = require('../Route');
 
-// const Middleware = require('../application_modules/admin/middlewares/TestMiddleware');
-
-// Need to take into consideration middleware
-
-// Options for Middleware
-// > Middleware can be declared at a modular level
-// > Middleware can be declared at an application level ?? ( Probably Unecessary )
-// > Middleware can be declared at a route specific option
-// > Middleware can be declared at a grouping level
-// > How do you group routes?
+// ERR: Need to consider how middleware is handled.
 
 function ModuleRoutingProvider() {
   this.router = express.Router();
-
-  // ModuleRoutingProvider should have some context of the booting module
-
-  // this.router.use((req, res, next) => {
-  //   console.log('Time: ', Date.now());
-  //   next();
-  // }, (req, res, next) => {
-  //   console.log('This is the next function');
-  //   next();
-  // }, (req, res, next) => {
-  //   console.log('This is the last function');
-  //   next();
-  // });
-  // this.bindMiddleware(Middleware);
-}
+};
 
 ModuleRoutingProvider.prototype.setModuleName = function start(name) {
   this.moduleName = name;
@@ -39,11 +16,8 @@ ModuleRoutingProvider.prototype.getModuleName = function start() {
 };
 
 ModuleRoutingProvider.prototype.bindMiddleware = function start(middlewareList) {
-  // this should bind the middleware;
-  // for each of the middleware functions for the module - bind to the router;
-  // this needs direct access to the listing of the file directories
+  // ERR: Preliminary implementation of applying middleware - VERY EXPERIMENTAL
   Object.values(middlewareList).forEach((v) => {
-    // console.log(key, value, index);
     this.router
       .use((req, res, next) => {
         v.apply(null, [req, res, next]);
@@ -65,14 +39,17 @@ ModuleRoutingProvider.prototype.post = function start(route) {
   if (!(route instanceof Route)) {
     throw (new Error('Missing Route argument.'));
   }
+
+  // ERR: Implementation needed to handle post routes
   // this.router.post(route.getUrl(), (req, res) => {
   //   console.log('this is the route');
   // });
+
   return true;
 };
 
 ModuleRoutingProvider.prototype.getRouter = function start() {
-  // get the instance of the router
+  // Return the instance of router
   return this.router;
 };
 
