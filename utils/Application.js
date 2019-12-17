@@ -56,10 +56,8 @@ module.exports = (function start() {
     return true;
   };
 
+  /**************** EVENT ROUTING *****************/
   const bootModuleEvents = () => {
-    // iterate through the modules and require the events
-    /**************** EVENT ROUTING *****************/
-    // this should be to require the events file
     const filesToInclude = {};
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
       const moduleName = value;
@@ -68,10 +66,7 @@ module.exports = (function start() {
       filesToInclude[moduleName] = eventsFile;
     });
 
-    //for(let i = 0; i < (ModuleEventProvider.getInstance()).getEventList().length; i++){
-    //  console.log(ModuleEventProvider.getInstance().getEventList()[i].channel);
-    //}
-    Object.entries(filesToInclude).forEach([key, value], index) => {
+    Object.entries(filesToInclude).forEach(([key, value], index) => {
       require(value);
       SubscriptionFactory.subscribeToAll(ModuleEventProvider.getInstance().getEventList(), key);
     });

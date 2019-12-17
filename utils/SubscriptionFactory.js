@@ -10,4 +10,7 @@ module.exports = (function start () {
       // redis subscribe
     });
   };
+  return {
+    subscribeToAll,
+  }
 }());
