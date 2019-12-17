@@ -5,8 +5,6 @@ const { ConfigParser } = require('../utils/generic');
 const controllerConfig = require(BRC487.commute('config.controllers'));
 const moduleConfig = require(BRC487.commute('config.modules'));
 
-// let text = ConfigParser.parseWithEmbeddedVariables(routeConfig.baseDir, { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` });
-
 module.exports = (function start() {
   const get = (path, fn) => {
     if(path === undefined || path === null){
@@ -18,26 +16,22 @@ module.exports = (function start() {
     console.log(typeof(fn));
     switch (typeof(fn)){
       case 'function':
-        // do nothing
-        console.log('function is function');
+        // Function exists - Do nothing.
         break;
       case 'string':
-        // get function from the controller
-        console.log('function is string');
+        // Parse the string to retrieve correct function from the controller
         let parts = fn.split('@');
         const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
-        // use the controllers config part to define where to get the controllers
         // const text = ConfigParser.parseWithEmbeddedVariables(controllerConfig.baseDir, {});
-        // Requires using the root node from the tree
         const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
         const handler = require(`${absolutePathToBaseProject}/application_modules/${moduleName}/controllers/http/${parts[0]}`);
         fn = handler[parts[1]];
         break;
       default:
+        // Handler is not defined in a way that can function
         throw (new Error('Handler function is incorrectly defined.'));
         break;
     }
-    // If anything else => throw error
     const route = (new Route()).get(path, fn);
     ModuleRoutingProvider.getInstance().get(route);
     return route;
