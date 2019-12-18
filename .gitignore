@@ -1,0 +1,5 @@
+node_modules/*
+testing_components/*
+*.root
+*.env
+
