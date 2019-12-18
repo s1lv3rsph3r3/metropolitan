@@ -17,7 +17,12 @@
   "homepage": "https://github.com/s1lv3rsph3r3/metropolitan#readme",
   "description": "",
   "dependencies": {
+    "@s1lv3rsph3r3/central": "^1.0.0",
     "express": "^4.17.1",
-    "@s1lv3rsph3r3/central": "^1.0.0"
+    "ioredis": "^4.14.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0"
   }
 }
