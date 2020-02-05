@@ -4,6 +4,7 @@ const ModuleRoutingProvider = require('./providers/ModuleRoutingProviderFacade')
 const { ConfigParser } = require('../utils/generic');
 const controllerConfig = require(BRC487.commute('config.controllers'));
 const moduleConfig = require(BRC487.commute('config.modules'));
+const routeApplicationConfig = require(BRC487.commute('config.applicationModules'));
 
 module.exports = (function start() {
   const get = (path, fn) => {
@@ -23,7 +24,7 @@ module.exports = (function start() {
         const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
         // const text = ConfigParser.parseWithEmbeddedVariables(controllerConfig.baseDir, {});
         const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
-        const handler = require(`${absolutePathToBaseProject}/application_modules/${moduleName}/controllers/http/${parts[0]}`);
+        const handler = require(`${absolutePathToBaseProject}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${parts[0]}`);
         fn = handler[parts[1]];
         break;
       default:

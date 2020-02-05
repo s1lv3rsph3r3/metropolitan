@@ -3,7 +3,8 @@
   "version": "1.0.12",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --exit",
+    "coverage": "nyc npm run test"
   },
   "repository": {
     "type": "git",
@@ -17,12 +18,16 @@
   "homepage": "https://github.com/s1lv3rsph3r3/metropolitan#readme",
   "description": "",
   "dependencies": {
-    "@s1lv3rsph3r3/central": "^1.0.0",
+    "@s1lv3rsph3r3/central": "^1.0.5",
     "express": "^4.17.1",
     "ioredis": "^4.14.1",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
-    "dotenv": "^8.2.0"
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "dotenv": "^8.2.0",
+    "mocha": "^7.0.1",
+    "nyc": "^15.0.0"
   }
 }
