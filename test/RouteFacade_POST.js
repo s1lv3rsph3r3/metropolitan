@@ -18,7 +18,7 @@ let Route;
 
     // config is correctly setup
     RouteFacade = require('../facade/RouteFacade');
-    Route = require('../proto/Route');
+    Route = require('../proto/Route').Route;
   });
 
   after(function(){
