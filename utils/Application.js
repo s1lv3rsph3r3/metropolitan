@@ -61,8 +61,19 @@ module.exports = (function start() {
   /**************** EVENT ROUTING *****************/
   const bootModuleEvents = () => {
     const filesToInclude = {};
+    // foreach module in production listing do the following
+    //  > Grab the moduleName
+    //  > Get the events files bound to the module
+
+    // foreach file in the list of files do the following
+    //  > Require the file - > using the facade this will add to the list in ModuleEventProvider
+    //  > Use the subscription factory to bind the listeners
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
+
       const moduleName = value;
+
+      // Build an absolute path to events file using configuration settings
+      // ERR: This makes an assumption that the module only has one events file!
       eventsFile = ConfigParser.parseWithEmbeddedVariables(
         routeConfig.baseDir,
         { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
@@ -71,8 +82,13 @@ module.exports = (function start() {
       filesToInclude[moduleName] = eventsFile;
     });
 
+    // For each module with a relevant events file we subscribe to the events
     Object.entries(filesToInclude).forEach(([key, value], index) => {
+
+      // Requiring the events file builds the ModuleEventProvider with the list of events
       require(value);
+
+      // SubscriptionFactory is responsible for listening to all listed events
       SubscriptionFactory.subscribeToAll(ModuleEventProvider.getInstance().getEventList(), key);
     });
   };

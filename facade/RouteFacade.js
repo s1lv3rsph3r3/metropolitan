@@ -37,10 +37,28 @@ module.exports = (function start() {
     return route;
   };
 
-  const post = (path) => {
+  const post = (path, fn) => {
     if(path === undefined || path === null){
       throw (new Error('Missing URL argument.'));
-    };
+    }
+    if(fn === undefined || fn === null){
+      throw (new Error('Missing fn argument.'));
+    }
+    switch (typeof(fn)){
+      case 'function':
+        // Function exists - Do nothing.
+        break;
+      case 'string':
+        // Parse the string to retrieve correct function from the controller
+        let parts = fn.split('@');
+        const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
+        const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
+        const handler = require(`${absolutePathToBaseProject}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${parts[0]}`);
+        fn = handler[parts[1]];
+        break;
+      default:
+        break;
+    }
     const route = (new Route()).post(path);
     ModuleRoutingProvider.getInstance().post(route);
     return route;

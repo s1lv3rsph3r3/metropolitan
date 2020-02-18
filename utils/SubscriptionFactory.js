@@ -7,7 +7,10 @@ module.exports = (function start () {
     // take the redis instance and call subscribe with a standard console log function
     Object.values(listOfEvents).forEach((v) => {
        console.log(v.channel, modulePrefix);
-      // redis subscribe
+       // redis subscribe
+       redis.subscribe(v.channel, (err, count) => {
+         // subscribe to the channel
+       });
     });
   };
   return {
