@@ -20,7 +20,7 @@ Route.prototype.get = function start(url, fn) {
   return this;
 };
 
-Route.prototype.post = function start(url) {
+Route.prototype.post = function start(url, fn) {
   // If the url is not defined then throw an error
   if (url === undefined || url === null) {
     throw (new Error('Missing required arguments.'));
