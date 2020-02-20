@@ -41,7 +41,7 @@ ModuleRoutingProvider.prototype.post = function start(route) {
   }
 
   this.router.post(route.getUrl(), (req, res) => {
-    route.getHander().apply(null, [req, res]);
+    route.getHandler().apply(null, [req, res]);
   });
 
   return true;
