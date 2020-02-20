@@ -59,7 +59,7 @@ module.exports = (function start() {
       default:
         break;
     }
-    const route = (new Route()).post(path);
+    const route = (new Route()).post(path, fn);
     ModuleRoutingProvider.getInstance().post(route);
     return route;
   };

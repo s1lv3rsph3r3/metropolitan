@@ -40,10 +40,9 @@ ModuleRoutingProvider.prototype.post = function start(route) {
     throw (new Error('Missing Route argument.'));
   }
 
-  // ERR: Implementation needed to handle post routes
-  // this.router.post(route.getUrl(), (req, res) => {
-  //   console.log('this is the route');
-  // });
+  this.router.post(route.getUrl(), (req, res) => {
+    route.getHander().apply(null, [req, res]);
+  });
 
   return true;
 };

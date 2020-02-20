@@ -32,6 +32,7 @@ Route.prototype.post = function start(url) {
   }
 
   this.url = url;
+  this.handler = fn;
   return this;
 };
 
