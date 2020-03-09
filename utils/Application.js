@@ -60,7 +60,7 @@ module.exports = (function start() {
 
   /**************** EVENT ROUTING *****************/
   const bootModuleEvents = () => {
-    const filesToInclude = {};
+    //const filesToInclude = {};
     // foreach module in production listing do the following
     //  > Grab the moduleName
     //  > Get the events files bound to the module
@@ -72,6 +72,12 @@ module.exports = (function start() {
 
       const moduleName = value;
 
+      // Dispose of ModuleEventProvider if it exists
+      ModuleEventProvider.dispose();
+
+      // Creates a new instance of the ModuleEventProvider and sets the name to the current module
+      ModuleEventProvider.setModuleName(moduleName);
+
       // Build an absolute path to events file using configuration settings
       // ERR: This makes an assumption that the module only has one events file!
       eventsFile = ConfigParser.parseWithEmbeddedVariables(
@@ -79,17 +85,16 @@ module.exports = (function start() {
         { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
       );
       eventsFile = `${absolutePathToBaseProject}/${eventsFile}${routeConfig.events}`;
-      filesToInclude[moduleName] = eventsFile;
-    });
+      //filesToInclude[moduleName] = eventsFile;
 
-    // For each module with a relevant events file we subscribe to the events
-    Object.entries(filesToInclude).forEach(([key, value], index) => {
+      // For each module with a relevant events file we subscribe to the events
+      // Object.entries(filesToInclude).forEach(([key, value], index) => {
 
       // Requiring the events file builds the ModuleEventProvider with the list of events
-      require(value);
+      require(eventsFile);
 
       // SubscriptionFactory is responsible for listening to all listed events
-      SubscriptionFactory.subscribeToAll(ModuleEventProvider.getInstance().getEventList(), key);
+      SubscriptionFactory.subscribeToAll(ModuleEventProvider.getInstance().getEventList(), moduleName);
     });
   };
 

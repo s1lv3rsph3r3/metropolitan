@@ -15,7 +15,27 @@ module.exports = (function start() {
     return INSTANCE;
   };
 
+  const dispose = () => {
+    // set to null or delete
+    if(INSTANCE){
+      INSTANCE = undefined;
+      return true;
+    }
+    return false;
+  };
+
+  const setModuleName = (name) => {
+    if(INSTANCE){
+      throw (new Error('Cannot set the module name on an already existing INSTANCE.'));
+    }
+    INSTANCE = createInstance();
+    INSTANCE.setModuleName(name);
+    return true;
+  }
+
   return {
     getInstance,
+    dispose,
+    setModuleName,
   };
 }());
