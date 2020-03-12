@@ -13,4 +13,12 @@ ModuleEventProvider.prototype.getEventList = function getEventList() {
   return this.eventList;
 };
 
+ModuleEventProvider.prototype.setModuleName = function start(name){
+  this.moduleName = name;
+}
+
+ModuleEventProvider.prototype.getModuleName = function start(name){
+  return this.moduleName;
+}
+
 module.exports = { ModuleEventProvider };
