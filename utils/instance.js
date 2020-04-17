@@ -1,3 +1,4 @@
+const bodyParser = require('body-parser');
 const fs = require('fs');
 const express = require('express');
 const Redis = require('ioredis');
@@ -14,6 +15,8 @@ const https = require('https');
 /** ***************** */
 
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended : true}));
 
 /* PRODUCTION ONLY */
 // set the ssl cert and key values
