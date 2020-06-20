@@ -74,24 +74,21 @@ module.exports = (function start() {
       // Creates a new instance of the ModuleRoutingProvider and sets the name to the current module loading
       ModuleRoutingProvider.setModuleName(moduleName);
 
-      // Generate a list of route files
-      const routeFileList = [];
-      Object.entries(routeConfig.filename).forEach(([key, value], index) => {
-        let text = ConfigParser.parseWithEmbeddedVariables(
-            routeConfig.baseDir,
-            { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
-        );
+      // Build an absolute path to events file using configuration settings
+      // ERR: This makes an assumption that the module only has one events file!
+      let apiFile = ConfigParser.parseWithEmbeddedVariables(
+          routeConfig.baseDir,
+          {moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}`}
+      );
+      apiFile = `${absolutePathToBaseProject}/${apiFile}${routeConfig.api}`;
+      //filesToInclude[moduleName] = eventsFile;
 
-        // Add to the list of route files to require
-        text = `${absolutePathToBaseProject}/${text}${value}`;
-        routeFileList.push(text);
-      });
+      // For each module with a relevant events file we subscribe to the events
+      // Object.entries(filesToInclude).forEach(([key, value], index) => {
 
-      // Require each routing file for the current module namespace
-      for (let i = 0; i < routeFileList.length; i++) {
-        let text = `${routeFileList[i]}`;
-        require(text);
-      }
+      // Requiring the events file builds the ModuleEventProvider with the list of events
+      require(apiFile);
+
 
       // this should be defined in the api config json
       const apiNamespace = '/api/v1/';
@@ -125,9 +122,9 @@ module.exports = (function start() {
 
       // Build an absolute path to events file using configuration settings
       // ERR: This makes an assumption that the module only has one events file!
-      eventsFile = ConfigParser.parseWithEmbeddedVariables(
-        routeConfig.baseDir,
-        { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
+      let eventsFile = ConfigParser.parseWithEmbeddedVariables(
+          routeConfig.baseDir,
+          {moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}`}
       );
       eventsFile = `${absolutePathToBaseProject}/${eventsFile}${routeConfig.events}`;
       //filesToInclude[moduleName] = eventsFile;
