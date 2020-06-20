@@ -16,7 +16,7 @@ const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
 module.exports = (function start() {
 
   /******* MODULE ROUTING ***************/
-  const bootModules = (app) => {
+  const bootWebRoutes = (app) => {
     if (app === undefined || app === null) {
       throw (new Error('Missing app argument.'));
     }
@@ -51,6 +51,51 @@ module.exports = (function start() {
       }
 
       const namespace = `/${moduleName}`;
+      const router = ModuleRoutingProvider.getInstance().getRouter();
+      app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
+    });
+
+    return true;
+  };
+
+  /******* API ROUTING ***************/
+  const bootApiRoutes = (app) => {
+    if (app === undefined || app === null) {
+      throw (new Error('Missing app argument.'));
+    }
+
+    Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
+
+      const moduleName = value;
+
+      // Dispose of ModuleRoutingProvider if it exists
+      ModuleRoutingProvider.dispose();
+
+      // Creates a new instance of the ModuleRoutingProvider and sets the name to the current module loading
+      ModuleRoutingProvider.setModuleName(moduleName);
+
+      // Generate a list of route files
+      const routeFileList = [];
+      Object.entries(routeConfig.filename).forEach(([key, value], index) => {
+        let text = ConfigParser.parseWithEmbeddedVariables(
+            routeConfig.baseDir,
+            { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
+        );
+
+        // Add to the list of route files to require
+        text = `${absolutePathToBaseProject}/${text}${value}`;
+        routeFileList.push(text);
+      });
+
+      // Require each routing file for the current module namespace
+      for (let i = 0; i < routeFileList.length; i++) {
+        let text = `${routeFileList[i]}`;
+        require(text);
+      }
+
+      // this should be defined in the api config json
+      const apiNamespace = '/api/v1/';
+      const namespace = `${apiNamespace}${moduleName}`;
       const router = ModuleRoutingProvider.getInstance().getRouter();
       app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
     });
@@ -120,7 +165,8 @@ module.exports = (function start() {
   };
 
   return {
-    bootModules,
+    bootWebRoutes,
+    bootApiRoutes,
     bootModuleEvents,
     bindApplicationMiddlewares,
   };
