@@ -80,7 +80,7 @@ module.exports = (function start() {
           routeConfig.baseDir,
           {moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}`}
       );
-      apiFile = `${absolutePathToBaseProject}/${apiFile}${routeConfig.api}`;
+      apiFile = `${absolutePathToBaseProject}/${apiFile}${routeConfig.api.filename}`;
       //filesToInclude[moduleName] = eventsFile;
 
       // For each module with a relevant events file we subscribe to the events
