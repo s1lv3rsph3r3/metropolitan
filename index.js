@@ -8,7 +8,6 @@ const Api = require('./facade/RouteFacade');
 /* Utils - Returned as tools to use across the program */
 const applicationUtils = require('./utils/Application');
 const genericUtils = require('./utils/generic');
-// const instance = require('./utils/instance');
 
 module.exports = {
   Event,
@@ -16,5 +15,4 @@ module.exports = {
   Api,
   applicationUtils,
   genericUtils,
-  // instance,
 };

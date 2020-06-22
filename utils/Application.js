@@ -32,23 +32,23 @@ module.exports = (function start() {
       ModuleRoutingProvider.setModuleName(moduleName);
 
       // Generate a list of route files
-      const routeFileList = [];
-      Object.entries(routeConfig.filename).forEach(([key, value], index) => {
+      // const routeFileList = [];
+      // Object.entries(routeConfig.filename).forEach(([key, value], index) => {
         let text = ConfigParser.parseWithEmbeddedVariables(
           routeConfig.baseDir,
           { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
         );
 
         // Add to the list of route files to require
-        text = `${absolutePathToBaseProject}/${text}${value}`;
-        routeFileList.push(text);
-      });
+        text = `${absolutePathToBaseProject}/${text}${routeConfig.routes}`;
+      //  routeFileList.push(text);
+      // });
 
       // Require each routing file for the current module namespace
-      for (let i = 0; i < routeFileList.length; i++) {
-        let text = `${routeFileList[i]}`;
+      // for (let i = 0; i < routeFileList.length; i++) {
+        // let text = `${routeFileList[i]}`;
         require(text);
-      }
+      // }
 
       const namespace = `/${moduleName}`;
       const router = ModuleRoutingProvider.getInstance().getRouter();
@@ -91,7 +91,7 @@ module.exports = (function start() {
 
 
       // this should be defined in the api config json
-      const apiNamespace = '/api/v1/';
+      const apiNamespace = `/${routeConfig.api.prefix}/${routeConfig.api.version}/`;
       const namespace = `${apiNamespace}${moduleName}`;
       const router = ModuleRoutingProvider.getInstance().getRouter();
       app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
