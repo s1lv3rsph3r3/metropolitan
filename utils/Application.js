@@ -91,7 +91,7 @@ module.exports = (function start() {
 
 
       // this should be defined in the api config json
-      const apiNamespace = `/${routeConfig.api.prefix}/${routeConfig.api.version}/`;
+      const apiNamespace = `/${routeConfig.api.prefix}/v${routeConfig.api.version}/`;
       const namespace = `${apiNamespace}${moduleName}`;
       const router = ModuleRoutingProvider.getInstance().getRouter();
       app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
