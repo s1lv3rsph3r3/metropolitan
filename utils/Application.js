@@ -11,6 +11,9 @@ const routeConfig = require(BRC487.commute('config.routes'));
 // Module configuration file
 const moduleConfig = require(BRC487.commute('config.modules'));
 
+// Application modules configuration file
+const applicationModulesConfig = require(BRC487.commute('config.applicationModules'));
+
 const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
 
 module.exports = (function start() {
@@ -36,7 +39,7 @@ module.exports = (function start() {
       // Object.entries(routeConfig.filename).forEach(([key, value], index) => {
         let text = ConfigParser.parseWithEmbeddedVariables(
           routeConfig.baseDir,
-          { moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}` }
+          { moduleDir: `${applicationModulesConfig.baseDir}`, moduleName: `${moduleName}` }
         );
 
         // Add to the list of route files to require
@@ -78,7 +81,7 @@ module.exports = (function start() {
       // ERR: This makes an assumption that the module only has one events file!
       let apiFile = ConfigParser.parseWithEmbeddedVariables(
           routeConfig.baseDir,
-          {moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}`}
+          {moduleDir: `${applicationModulesConfig.baseDir}`, moduleName: `${moduleName}`}
       );
       apiFile = `${absolutePathToBaseProject}/${apiFile}${routeConfig.api.filename}`;
       //filesToInclude[moduleName] = eventsFile;
@@ -124,7 +127,7 @@ module.exports = (function start() {
       // ERR: This makes an assumption that the module only has one events file!
       let eventsFile = ConfigParser.parseWithEmbeddedVariables(
           routeConfig.baseDir,
-          {moduleDir: `${moduleConfig.baseDir}`, moduleName: `${moduleName}`}
+          {moduleDir: `${applicationModulesConfig.baseDir}`, moduleName: `${moduleName}`}
       );
       eventsFile = `${absolutePathToBaseProject}/${eventsFile}${routeConfig.events}`;
       //filesToInclude[moduleName] = eventsFile;
