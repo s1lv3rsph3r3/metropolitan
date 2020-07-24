@@ -143,6 +143,21 @@ module.exports = (function start() {
     });
   };
 
+  /*************** Micro Service City **********/
+  const bootModulePreReq = () => {
+    Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
+
+      const moduleName = value;
+
+      let bootloader = ConfigParser.parseWithEmbeddedVariables(
+          applicationModulesConfig.main,
+          {moduleDir: `${applicationModulesConfig.baseDir}`, moduleName: `${moduleName}`, moduleMain: `${moduleConfig.main}`}
+      );
+      bootloader = `${absolutePathToBaseProject}/${bootloader}`;
+      require(bootloader);
+    });
+  };
+
   /**************** MIDDLEWARE *****************/
   // ERR: This is very experimental - requires more work
   const bindApplicationMiddlewares = (app) => {
@@ -168,6 +183,7 @@ module.exports = (function start() {
     bootWebRoutes,
     bootApiRoutes,
     bootModuleEvents,
+    bootModulePreReq,
     bindApplicationMiddlewares,
   };
 }());
