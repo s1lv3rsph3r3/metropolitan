@@ -1,6 +1,6 @@
 {
   "name": "@s1lv3rsph3r3/metropolitan",
-  "version": "1.0.26",
+  "version": "1.0.27",
   "main": "index.js",
   "scripts": {
     "test": "mocha --exit",
