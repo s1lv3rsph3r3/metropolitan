@@ -26,7 +26,7 @@ module.exports = (function start() {
 
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
 
-      const moduleName = value;
+      const moduleName = key;
 
       // Dispose of ModuleRoutingProvider if it exists
       ModuleRoutingProvider.dispose();
@@ -53,7 +53,7 @@ module.exports = (function start() {
         require(text);
       // }
 
-      const namespace = `/${moduleName}`;
+      const namespace = `/${value.slug}`;
       const router = ModuleRoutingProvider.getInstance().getRouter();
       app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
     });
@@ -69,7 +69,7 @@ module.exports = (function start() {
 
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
 
-      const moduleName = value;
+      const moduleName = key;
 
       // Dispose of ModuleRoutingProvider if it exists
       ModuleRoutingProvider.dispose();
@@ -95,7 +95,7 @@ module.exports = (function start() {
 
       // this should be defined in the api config json
       const apiNamespace = `/${routeConfig.api.prefix}/v${routeConfig.api.version}/`;
-      const namespace = `${apiNamespace}${moduleName}`;
+      const namespace = `${apiNamespace}${value.slug}`;
       const router = ModuleRoutingProvider.getInstance().getRouter();
       app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
     });
@@ -115,7 +115,7 @@ module.exports = (function start() {
     //  > Use the subscription factory to bind the listeners
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
 
-      const moduleName = value;
+      const moduleName = key;
 
       // Dispose of ModuleEventProvider if it exists
       ModuleEventProvider.dispose();
@@ -139,6 +139,7 @@ module.exports = (function start() {
       require(eventsFile);
 
       // SubscriptionFactory is responsible for listening to all listed events
+      // TODO: Change namespace to use a slug rather than camel case - maybe??
       SubscriptionFactory.subscribeToAll(ModuleEventProvider.getInstance().getEventList(), moduleName);
     });
   };
@@ -147,7 +148,7 @@ module.exports = (function start() {
   const bootModulePreReq = () => {
     Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
 
-      const moduleName = value;
+      const moduleName = key;
 
       let bootloader = ConfigParser.parseWithEmbeddedVariables(
           applicationModulesConfig.main,
