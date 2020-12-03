@@ -1,20 +1,26 @@
-const { BRC487 } = require('@s1lv3rsph3r3/central');
-const fs = require('fs');
+const path = require('path');
 const { ConfigParser } = require('./generic');
 const ModuleRoutingProvider = require('../facade/providers/ModuleRoutingProviderFacade');
 const ModuleEventProvider = require('../facade/providers/ModuleEventProviderFacade');
 const SubscriptionFactory = require('./SubscriptionFactory');
-
+const basePath = path.resolve();
 // Route configuration file
-const routeConfig = require(BRC487.commute('config.routes'));
+const routeConfigPath = path.resolve(basePath, 'config/routes.json');
+const routeConfig = require(routeConfigPath);
 
-// Module configuration file
-const moduleConfig = require(BRC487.commute('config.modules'));
+// Base Module configuration file
+const baseModuleConfigPath = path.resolve(basePath, 'config/modules.json');
+const baseModuleConfig = require(baseModuleConfigPath);
 
 // Application modules configuration file
-const applicationModulesConfig = require(BRC487.commute('config.applicationModules'));
+const applicationModulesConfigPath = path.resolve(basePath, 'config/applicationModules.json');
+const applicationModulesConfig = require(applicationModulesConfigPath);
 
-const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
+const absolutePathToBaseProject = basePath;
+
+console.log(path.resolve(absolutePathToBaseProject, baseModuleConfig.install))
+// Module configuration file
+const moduleConfig = require(path.resolve(absolutePathToBaseProject, baseModuleConfig.install));
 
 module.exports = (function start() {
 
@@ -23,10 +29,11 @@ module.exports = (function start() {
     if (app === undefined || app === null) {
       throw (new Error('Missing app argument.'));
     }
-
-    Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
-
-      const moduleName = key;
+    console.log(moduleConfig);
+    Object.values(moduleConfig.install).forEach((value) => {
+      console.log(value);
+      // value is the moduleName
+      const moduleName = value;
 
       // Dispose of ModuleRoutingProvider if it exists
       ModuleRoutingProvider.dispose();
@@ -37,23 +44,23 @@ module.exports = (function start() {
       // Generate a list of route files
       // const routeFileList = [];
       // Object.entries(routeConfig.filename).forEach(([key, value], index) => {
-        let text = ConfigParser.parseWithEmbeddedVariables(
+      let text = ConfigParser.parseWithEmbeddedVariables(
           routeConfig.baseDir,
           { moduleDir: `${applicationModulesConfig.baseDir}`, moduleName: `${moduleName}` }
-        );
+      );
 
-        // Add to the list of route files to require
-        text = `${absolutePathToBaseProject}/${text}${routeConfig.routes}`;
+      // Add to the list of route files to require
+      text = `${absolutePathToBaseProject}/${text}${routeConfig.routes}`;
       //  routeFileList.push(text);
       // });
 
       // Require each routing file for the current module namespace
       // for (let i = 0; i < routeFileList.length; i++) {
-        // let text = `${routeFileList[i]}`;
-        require(text);
+      // let text = `${routeFileList[i]}`;
+      require(text);
       // }
 
-      const namespace = `/${value.slug}`;
+      const namespace = `/${moduleConfig.modules[moduleName].slug}`;
       const router = ModuleRoutingProvider.getInstance().getRouter();
       app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
     });
@@ -67,9 +74,9 @@ module.exports = (function start() {
       throw (new Error('Missing app argument.'));
     }
 
-    Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
+    Object.values(moduleConfig.install).forEach((value) => {
 
-      const moduleName = key;
+      const moduleName = value;
 
       // Dispose of ModuleRoutingProvider if it exists
       ModuleRoutingProvider.dispose();
@@ -95,7 +102,7 @@ module.exports = (function start() {
 
       // this should be defined in the api config json
       const apiNamespace = `/${routeConfig.api.prefix}/v${routeConfig.api.version}/`;
-      const namespace = `${apiNamespace}${value.slug}`;
+      const namespace = `${apiNamespace}${moduleConfig.modules[moduleName].slug}`;
       const router = ModuleRoutingProvider.getInstance().getRouter();
       app.use(namespace, ModuleRoutingProvider.getInstance().getRouter());
     });
@@ -113,9 +120,9 @@ module.exports = (function start() {
     // foreach file in the list of files do the following
     //  > Require the file - > using the facade this will add to the list in ModuleEventProvider
     //  > Use the subscription factory to bind the listeners
-    Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
+    Object.values(moduleConfig.install).forEach((value) => {
 
-      const moduleName = key;
+      const moduleName = value;
 
       // Dispose of ModuleEventProvider if it exists
       ModuleEventProvider.dispose();
@@ -146,13 +153,13 @@ module.exports = (function start() {
 
   /*************** Micro Service City **********/
   const bootModulePreReq = () => {
-    Object.entries(moduleConfig.modules.production).forEach(([key, value], index) => {
+    Object.values(moduleConfig.install).forEach((value) => {
 
-      const moduleName = key;
+      const moduleName = value;
 
       let bootloader = ConfigParser.parseWithEmbeddedVariables(
           applicationModulesConfig.main,
-          {moduleDir: `${applicationModulesConfig.baseDir}`, moduleName: `${moduleName}`, moduleMain: `${moduleConfig.main}`}
+          {moduleDir: `${applicationModulesConfig.baseDir}`, moduleName: `${moduleName}`, moduleMain: `${baseModuleConfig.main}`}
       );
       bootloader = `${absolutePathToBaseProject}/${bootloader}`;
       require(bootloader);
@@ -160,25 +167,26 @@ module.exports = (function start() {
   };
 
   /**************** MIDDLEWARE *****************/
-  // ERR: This is very experimental - requires more work
+      // ERR: This is very experimental - requires more work
   const bindApplicationMiddlewares = (app) => {
-    const applicationMiddlewaresConfig = require(BRC487.commute('config.middleware'));
-    Object.entries(applicationMiddlewaresConfig.app).forEach( ([key, value], index) => {
-      // key is the filename
-      // value is the array of functions
-      // index is just the index
-      // loop through all the values to add to the app
-      const stringReq = `${absolutePathToBaseProject}/${applicationMiddlewaresConfig.rootDir}/${key}`;
-      const middlewareFile = require(stringReq);
-      for(let i = 0; i < value.length; i++){
-        app.use((req,res,next) => {
-          (middlewareFile[value[i]]).apply(null, [req, res, next]);
+        const applicationMiddlewaresConfigPath = path.resolve(basePath, 'config/middlewares.json');
+        const applicationMiddlewaresConfig = require(applicationMiddlewaresConfigPath);
+        Object.entries(applicationMiddlewaresConfig.app).forEach( ([key, value], index) => {
+          // key is the filename
+          // value is the array of functions
+          // index is just the index
+          // loop through all the values to add to the app
+          const stringReq = `${absolutePathToBaseProject}/${applicationMiddlewaresConfig.rootDir}/${key}`;
+          const middlewareFile = require(stringReq);
+          for(let i = 0; i < value.length; i++){
+            app.use((req,res,next) => {
+              (middlewareFile[value[i]]).apply(null, [req, res, next]);
+            });
+          }
         });
-      }
-    });
-    // rootDir -> the location of the middlewares
-    // baseDir -> the location of the module spec middlewares
-  };
+        // rootDir -> the location of the middlewares
+        // baseDir -> the location of the module spec middlewares
+      };
 
   return {
     bootWebRoutes,

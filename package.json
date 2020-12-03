@@ -1,6 +1,6 @@
 {
   "name": "@s1lv3rsph3r3/metropolitan",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "main": "index.js",
   "scripts": {
     "test": "mocha --exit",
@@ -18,7 +18,6 @@
   "homepage": "https://github.com/s1lv3rsph3r3/metropolitan#readme",
   "description": "",
   "dependencies": {
-    "@s1lv3rsph3r3/central": "^1.0.5",
     "express": "^4.17.1",
     "ioredis": "^4.14.1",
     "socket.io": "^2.3.0"

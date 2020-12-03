@@ -3,4 +3,5 @@ testing_components/*
 .nyc_output/
 *.root
 *.env
+.idea/
 

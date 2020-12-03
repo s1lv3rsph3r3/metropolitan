@@ -1,10 +1,14 @@
-const { BRC487 } = require('@s1lv3rsph3r3/central');
+const path = require('path');
 const { Route } = require('../proto/Route');
 const ModuleRoutingProvider = require('./providers/ModuleRoutingProviderFacade');
 const { ConfigParser } = require('../utils/generic');
-const controllerConfig = require(BRC487.commute('config.controllers'));
-const moduleConfig = require(BRC487.commute('config.modules'));
-const routeApplicationConfig = require(BRC487.commute('config.applicationModules'));
+const basePath = path.resolve();
+const controllerConfigPath = path.resolve(basePath, 'config/controllers.json');
+const controllerConfig = require(controllerConfigPath);
+const moduleConfigPath = path.resolve(basePath, 'config/modules.json');
+const moduleConfig = require(moduleConfigPath);
+const routeApplicationConfigPath = path.resolve(basePath, 'config/applicationModules.json');
+const routeApplicationConfig = require(routeApplicationConfigPath);
 
 module.exports = (function start() {
   const get = (path, fn) => {
@@ -23,7 +27,7 @@ module.exports = (function start() {
         let parts = fn.split('@');
         const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
         // const text = ConfigParser.parseWithEmbeddedVariables(controllerConfig.baseDir, {});
-        const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
+        const absolutePathToBaseProject = basePath;
         const handler = require(`${absolutePathToBaseProject}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${parts[0]}`);
         fn = handler[parts[1]];
         break;
@@ -52,7 +56,7 @@ module.exports = (function start() {
         // Parse the string to retrieve correct function from the controller
         let parts = fn.split('@');
         const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
-        const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
+        const absolutePathToBaseProject = basePath;
         const handler = require(`${absolutePathToBaseProject}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${parts[0]}`);
         fn = handler[parts[1]];
         break;

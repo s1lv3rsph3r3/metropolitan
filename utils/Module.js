@@ -1,10 +1,11 @@
-const { BRC487 } = require('@s1lv3rsph3r3/central');
 const path = require('path');
+const basePath = path.resolve();
 
 // Application modules configuration file
-const applicationModulesConfig = require(BRC487.commute('config.applicationModules'));
+const applicationModulesConfigPath = path.resolve(basePath, 'config/applicationModules.json');
+const applicationModulesConfig = require(applicationModulesConfigPath);
 
-const absolutePathToBaseProject = BRC487.getAbsolutePathToBaseProject();
+const absolutePathToBaseProject = basePath;
 
 module.exports = (function start() {
 
