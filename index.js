@@ -2,8 +2,8 @@
 
 /* Facades - Returned as the respective proto name */
 const Event = require('./facade/EventFacade');
-const Route = require('./facade/RouteFacade');
-const Api = require('./facade/RouteFacade');
+const Route = require('./RouteFacade');
+const Api = require('./ApiFacade');
 
 /* Utils - Returned as tools to use across the program */
 const applicationUtils = require('./utils/Application');
