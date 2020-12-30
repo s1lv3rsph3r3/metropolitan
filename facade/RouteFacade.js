@@ -1,7 +1,7 @@
 const path = require('path');
-const { Route } = require('../proto/Route');
-const ModuleRoutingProvider = require('./providers/ModuleRoutingProviderFacade');
+const ModuleRouteStore = require('../dictionaries/ModuleRouteStore');
 const { ConfigParser } = require('../utils/generic');
+const Route = require('../proto/Route');
 const basePath = path.resolve();
 const controllerConfigPath = path.resolve(basePath, 'config/controllers.json');
 const controllerConfig = require(controllerConfigPath);
@@ -10,66 +10,73 @@ const moduleConfig = require(moduleConfigPath);
 const routeApplicationConfigPath = path.resolve(basePath, 'config/applicationModules.json');
 const routeApplicationConfig = require(routeApplicationConfigPath);
 
-module.exports = (function start() {
-  const get = (path, fn) => {
-    if(path === undefined || path === null){
-      throw (new Error('Missing URL argument.'));
-    }
-    if(fn === undefined || fn === null){
-      throw (new Error('Missing fn argument.'));
-    }
-    switch (typeof(fn)){
-      case 'function':
-        // Function exists - Do nothing.
-        break;
-      case 'string':
-        // Parse the string to retrieve correct function from the controller
-        let parts = fn.split('@');
-        const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
-        // const text = ConfigParser.parseWithEmbeddedVariables(controllerConfig.baseDir, {});
-        const absolutePathToBaseProject = basePath;
-        const handler = require(`${absolutePathToBaseProject}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${parts[0]}`);
-        fn = handler[parts[1]];
-        break;
-      default:
-        // Handler is not defined in a way that can function
-        throw (new Error('Handler function is incorrectly defined.'));
-        break;
-    }
-    const route = (new Route()).get(path, fn);
-    ModuleRoutingProvider.getInstance().get(route);
-    return route;
-  };
+const defaultGlobalDict = {
+    "global": true,
+    "module": true,
+    "type": true,
+    "verb": true
+};
+const type = 'web';
 
-  const post = (path, fn) => {
-    if(path === undefined || path === null){
-      throw (new Error('Missing URL argument.'));
+class RouteFacade{
+    static middleware(globalDict, customArr){
+        const callingCard = 'middleware';
+        return (new Route(callingCard, type)).middleware(globalDict, customArr);
     }
-    if(fn === undefined || fn === null){
-      throw (new Error('Missing fn argument.'));
+    static get(path, fn){
+        const callingCard = 'get';
+        RouteFacade.validateFacadeArgs(path, fn);
+        const func = RouteFacade.parseFunction(fn);
+        return (new Route(callingCard, type)).middleware(defaultGlobalDict, []).get(path, func);
     }
-    switch (typeof(fn)){
-      case 'function':
-        // Function exists - Do nothing.
-        break;
-      case 'string':
-        // Parse the string to retrieve correct function from the controller
-        let parts = fn.split('@');
-        const moduleName = ModuleRoutingProvider.getInstance().getModuleName();
-        const absolutePathToBaseProject = basePath;
-        const handler = require(`${absolutePathToBaseProject}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${parts[0]}`);
-        fn = handler[parts[1]];
-        break;
-      default:
-        break;
+    static post(path, fn){
+        const callingCard = 'post';
+        RouteFacade.validateFacadeArgs(path, fn);
+        const func = RouteFacade.parseFunction(fn);
+        return (new Route(callingCard, type)).middleware(defaultGlobalDict, []).post(path, func);
     }
-    const route = (new Route()).post(path, fn);
-    ModuleRoutingProvider.getInstance().post(route);
-    return route;
-  };
+    static put(path, fn){
+        const callingCard = 'put';
+        RouteFacade.validateFacadeArgs(path, fn);
+        const func = RouteFacade.parseFunction(fn);
+        return (new Route(callingCard).middleware(defaultGlobalDict, []).put(path, func));
+    }
+    static delete(path, fn){
+        const callingCard = 'delete';
+        RouteFacade.validateFacadeArgs(path, fn);
+        const func = RouteFacade.parseFunction(fn);
+        return (new Route(callingCard, type)).middleware(defaultGlobalDict, []).delete(path, func);
+    }
 
-  return {
-    get,
-    post,
-  };
-}());
+    static validateFacadeArgs(path, fn){
+        if(path === undefined || path === null){
+            throw (new Error('Missing URL argument.'));
+        }
+        if(fn === undefined || fn === null){
+            throw (new Error('Missing fn argument.'));
+        }
+        return true;
+    }
+
+    static parseFunction(fn){
+        let moduleName = ModuleRouteStore.currentKey();
+        let parts = [];
+        switch (typeof(fn)){
+            case 'function':
+                // Function exists - Do nothing.
+                break;
+            case 'string':
+                // Parse the string to retrieve correct function from the controller
+                parts = fn.split('@');
+                const handler = require(`${basePath}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${parts[0]}`);
+                fn = handler[parts[1]];
+                break;
+            default:
+                // Handler is not defined in a way that can function
+                throw (new Error('Handler function is incorrectly defined.'));
+        }
+        return fn;
+    }
+}
+
+module.exports = RouteFacade;

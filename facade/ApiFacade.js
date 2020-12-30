@@ -1,7 +1,7 @@
 const path = require('path');
-const ModuleRouteStore = require('./ModuleRouteStore');
-const { ConfigParser } = require('./utils/generic');
-const Route = require('./Route');
+const ModuleRouteStore = require('../dictionaries/ModuleRouteStore');
+const { ConfigParser } = require('../utils/generic');
+const Route = require('../proto/Route');
 const basePath = path.resolve();
 const controllerConfigPath = path.resolve(basePath, 'config/controllers.json');
 const controllerConfig = require(controllerConfigPath);

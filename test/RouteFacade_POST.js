@@ -92,14 +92,14 @@ let Route;
 
   // RouteFacade should only exist once
   it.skip('should only have 1 isntance of RouteFacade', function (){
-    const RouteFacadeOne = require('../RouteFacade');
-    const RouteFacadeTwo = require('../RouteFacade');
+    const RouteFacadeOne = require('../facade/RouteFacade');
+    const RouteFacadeTwo = require('../facade/RouteFacade');
     assert.equal(RouteFacadeOne, RouteFacadeTwo, 'Only 1 exists');
   });
 
   it.skip('should only have 1 instance of RouteFacade', function () {
-    const RouteFacadeOne = require('../RouteFacade');
-    const RouteFacadeTwo = require('../RouteFacade');
+    const RouteFacadeOne = require('../facade/RouteFacade');
+    const RouteFacadeTwo = require('../facade/RouteFacade');
     assert.equal(RouteFacadeOne.getValue(), 'Hello', 'RouteFacadeOne has Hello');
     assert.equal(RouteFacadeTwo.getValue(), 'Hello', 'RouteFacadeTwo has Hello');
     RouteFacadeOne.alterValue();
