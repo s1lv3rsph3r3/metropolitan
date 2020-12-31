@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const { ConfigParser } = require('./generic');
 const ModuleRouteStore = require('../dictionaries/ModuleRouteStore');
-const ModuleRoutingProvider = require('../facade/providers/ModuleRoutingProviderFacade');
 const ModuleEventProvider = require('../facade/providers/ModuleEventProviderFacade');
 const SubscriptionFactory = require('./SubscriptionFactory');
 const basePath = path.resolve();
