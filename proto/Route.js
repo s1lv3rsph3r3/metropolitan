@@ -8,7 +8,7 @@ const globalMiddlewareConfigPath = path.resolve(basePath, 'config/middlewares.js
 const globalMiddlewareConfig = require(globalMiddlewareConfigPath);
 
 // Application Modules config
-const routeApplicationConfigPath = path.resolve(basePath, 'config/applicationModules.json');
+const routeApplicationConfigPath = path.resolve(basePath, 'config/application-modules.json');
 const routeApplicationConfig = require(routeApplicationConfigPath);
 
 // Utility functions

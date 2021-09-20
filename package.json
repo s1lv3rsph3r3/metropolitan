@@ -1,6 +1,6 @@
 {
   "name": "@s1lv3rsph3r3/metropolitan",
-  "version": "1.0.35",
+  "version": "2.0.0",
   "main": "index.js",
   "scripts": {
     "test": "mocha --exit",
@@ -20,6 +20,7 @@
   "dependencies": {
     "express": "^4.17.1",
     "ioredis": "^4.14.1",
+    "lodash": "^4.17.21",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {

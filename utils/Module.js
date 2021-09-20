@@ -2,7 +2,7 @@ const path = require('path');
 const basePath = path.resolve();
 
 // Application modules configuration file
-const applicationModulesConfigPath = path.resolve(basePath, 'config/applicationModules.json');
+const applicationModulesConfigPath = path.resolve(basePath, 'config/application-modules.json');
 const applicationModulesConfig = require(applicationModulesConfigPath);
 
 const absolutePathToBaseProject = basePath;

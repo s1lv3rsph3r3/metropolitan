@@ -27,6 +27,7 @@ const ModuleRouteStore = (function(){
         if(k === null || k === undefined){
             throw (new Error('Cannot call next on null or undefined'));
         }
+        data = {};
         key = k;
     }
 

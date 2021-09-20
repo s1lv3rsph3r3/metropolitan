@@ -1,4 +1,5 @@
 const path = require('path');
+const {kebabCase} = require('lodash');
 const ModuleRouteStore = require('../dictionaries/ModuleRouteStore');
 const { ConfigParser } = require('../utils/generic');
 const Route = require('../proto/Route');
@@ -7,7 +8,7 @@ const controllerConfigPath = path.resolve(basePath, 'config/controllers.json');
 const controllerConfig = require(controllerConfigPath);
 const moduleConfigPath = path.resolve(basePath, 'config/modules.json');
 const moduleConfig = require(moduleConfigPath);
-const routeApplicationConfigPath = path.resolve(basePath, 'config/applicationModules.json');
+const routeApplicationConfigPath = path.resolve(basePath, 'config/application-modules.json');
 const routeApplicationConfig = require(routeApplicationConfigPath);
 
 const defaultGlobalDict = {
@@ -68,7 +69,7 @@ class ApiFacade{
             case 'string':
                 // Parse the string to retrieve correct function from the controller
                 parts = fn.split('@');
-                const handler = require(`${basePath}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${parts[0]}`);
+                const handler = require(`${basePath}/${routeApplicationConfig.baseDir}/${moduleName}/controllers/http/${kebabCase(parts[0])}`);
                 fn = handler[parts[1]];
                 break;
             default:
