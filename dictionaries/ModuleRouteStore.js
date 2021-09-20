@@ -1,5 +1,5 @@
 const ModuleRouteStore = (function(){
-    const data = {};
+    let data = {};
     let key = null;
 
     // Item is a Route
